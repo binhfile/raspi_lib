@@ -12,6 +12,17 @@ static void delayMicrosecondsHard(unsigned int howLong) {
     while (timercmp(&tNow, &tEnd, <)) gettimeofday(&tNow, NULL);
 }
 
+struct timeval time_now() {
+    struct timeval tNow;
+    gettimeofday(&tNow, NULL);
+    return tNow;
+}
+
+void time_diff(const struct timeval *a, const struct timeval *b, struct timeval *result){
+    timersub(b, a, result);
+}
+
+
 void delay_us(unsigned int howLong) {
     struct timespec sleeper;
     unsigned int uSecs = howLong % 1000000;

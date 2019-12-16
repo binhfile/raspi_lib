@@ -1,34 +1,16 @@
 #include "gpio.h"
 
+#include "delay.h"
+
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <time.h>
 #include <unistd.h>
 
 /* --------------------- */
-static void delay_us(uint32_t delay) {
-    struct timespec tv_req;
-    struct timespec tv_rem;
-    int i;
-    uint32_t del_ms, del_us;
-    del_ms = delay / 1000;
-    del_us = delay % 1000;
-    for (i = 0; i <= del_ms; i++) {
-        tv_req.tv_sec = 0;
-        if (i == del_ms)
-            tv_req.tv_nsec = del_us * 1000;
-        else
-            tv_req.tv_nsec = 1000000;
-        tv_rem.tv_sec = 0;
-        tv_rem.tv_nsec = 0;
-        nanosleep(&tv_req, &tv_rem);
-        if (tv_rem.tv_sec != 0 || tv_rem.tv_nsec != 0) printf("timer oops!\n");
-    }
-}
 
 #define GPIO_MIN 0
 #define GPIO_MAX 53
@@ -140,7 +122,6 @@ static int gpio_set_pull(rasp_gpio* drv, int gpio, rasp_gpio_pull_mode type) {
     return 0;
 }
 static void set_gpio_fsel(rasp_gpio* drv, int gpio, int fsel) {
-    static volatile uint32_t* tmp;
     uint32_t reg = gpio / 10;
     uint32_t sel = gpio % 10;
     uint32_t mask;
