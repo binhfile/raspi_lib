@@ -11,34 +11,33 @@
 
  */
 
-typedef struct rasp_gpio_internal_ {
+typedef struct gpio_internal_ {
     unsigned int hw_base_address;
     void* gpio_base;
     int is_2711;
-} rasp_gpio_internal;
+} gpio_internal;
 
-typedef struct rasp_gpio_ {
-    rasp_gpio_internal internal;
-} rasp_gpio;
+typedef struct gpio_ {
+    gpio_internal internal;
+} gpio;
 
-enum rasp_gpio_pull_mode {
-    rasp_gpio_pull_mode_none = 0,
-    rasp_gpio_pull_mode_down,
-    rasp_gpio_pull_mode_up,
-};
-enum rasp_gpio_direction {
-    rasp_gpio_direction_in = 0,
-    rasp_gpio_direction_out,
-};
+typedef enum gpio_pull_mode_ {
+    gpio_pull_mode_none = 0,
+    gpio_pull_mode_down,
+    gpio_pull_mode_up,
+} gpio_pull_mode;
+typedef enum gpio_direction_ {
+    gpio_direction_in = 0,
+    gpio_direction_out,
+} gpio_direction;
 
-int rasp_gpio_initialize(rasp_gpio* drv);
-int rasp_gpio_destroy(rasp_gpio* drv);
+int gpio_initialize(gpio* drv);
+int gpio_destroy(gpio* drv);
 
-int rasp_gpio_set_pull(rasp_gpio* drv, int pin_no, rasp_gpio_pull_mode mode);
-int rasp_gpio_set_direction(rasp_gpio* drv, int pin_no,
-                            rasp_gpio_direction dir);
+int gpio_set_pull(gpio* drv, int pin_no, gpio_pull_mode mode);
+int gpio_set_direction(gpio* drv, int pin_no, gpio_direction dir);
 
-int rasp_gpio_set_level(rasp_gpio* drv, int pin_no, int level_output);
-int rasp_gpio_get_level(rasp_gpio* drv, int pin_no);
+int gpio_set_level(gpio* drv, int pin_no, int level_output);
+int gpio_get_level(gpio* drv, int pin_no);
 
 #endif

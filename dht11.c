@@ -1,7 +1,7 @@
 #include "dht11.h"
 
-#include "gpio.h"
 #include "delay.h"
+#include "gpio.h"
 
 int dht11_initialize(dht11* drv) {
     for (int i = 0; i < 4; i++) {
@@ -11,24 +11,24 @@ int dht11_initialize(dht11* drv) {
 }
 int dht11_destroy(dht11* drv) { return 0; }
 
-static void set_low(rasp_gpio* drv, unsigned int pin) {
-    rasp_gpio_set_direction(drv, pin, rasp_gpio_direction_out);
-    rasp_gpio_set_level(drv, pin, 0);
+static void set_low(gpio* drv, unsigned int pin) {
+    gpio_set_direction(drv, pin, gpio_direction_out);
+    gpio_set_level(drv, pin, 0);
 }
-static void set_high(rasp_gpio* drv, unsigned int pin) {
-    rasp_gpio_set_direction(drv, pin, rasp_gpio_direction_out);
-    rasp_gpio_set_level(drv, pin, 1);
+static void set_high(gpio* drv, unsigned int pin) {
+    gpio_set_direction(drv, pin, gpio_direction_out);
+    gpio_set_level(drv, pin, 1);
 }
 
-int dht11_read(dht11* drv) {	
-    rasp_gpio gpio;
-    int err = rasp_gpio_initialize(&gpio);
+int dht11_read(dht11* drv) {
+    gpio gpio;
+    int err = gpio_initialize(&gpio);
     if (err) {
         return dht11_error_gpio_failed;
     }
-    err = rasp_gpio_set_pull(&gpio, drv->pin_no, rasp_gpio_pull_mode_up);
+    err = gpio_set_pull(&gpio, drv->pin_no, gpio_pull_mode_up);
     if (err) {
-        rasp_gpio_destroy(&gpio);
+        gpio_destroy(&gpio);
         return dht11_error_gpio_failed;
     }
 
@@ -40,7 +40,7 @@ int dht11_read(dht11* drv) {
     set_high(&gpio, drv->pin_no);
     delay_us(40);
 
-    rasp_gpio_set_direction(&gpio, drv->pin_no, rasp_gpio_direction_in);
+    gpio_set_direction(&gpio, drv->pin_no, gpio_direction_in);
     int prev_level = 1;
     int baud_cnt = 0;
     int bit_time[40] = {0};
@@ -51,7 +51,7 @@ int dht11_read(dht11* drv) {
         int level;
         int timeout = 0;
         do {
-            level = rasp_gpio_get_level(&gpio, drv->pin_no);
+            level = gpio_get_level(&gpio, drv->pin_no);
             if (level != prev_level) {
                 break;
             }
@@ -77,11 +77,11 @@ int dht11_read(dht11* drv) {
         ++baud_cnt;
     }
 
-    rasp_gpio_set_direction(&gpio, drv->pin_no, rasp_gpio_direction_out);
-    rasp_gpio_destroy(&gpio);
+    gpio_set_direction(&gpio, drv->pin_no, gpio_direction_out);
+    gpio_destroy(&gpio);
 
     if (err) return err;
-    
+
     const int time_threshold = 15;
 
     uint8_t data[5] = {0};

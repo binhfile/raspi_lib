@@ -9,15 +9,15 @@ typedef struct dht11_internal_ {
 
 typedef struct dht11_ {
     int pin_no;
-    
+
     dht11_internal internal;
 } dht11;
 
 enum dht11_error {
-	dht11_error_none = 0,
-	dht11_error_gpio_failed = 1,
-	dht11_error_timeout = 2,
-	dht11_error_checksum = 3,
+    dht11_error_none = 0,
+    dht11_error_gpio_failed = 1,
+    dht11_error_timeout = 2,
+    dht11_error_checksum = 3,
 };
 
 int dht11_initialize(dht11* drv);

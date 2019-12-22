@@ -76,7 +76,7 @@ static uint32_t get_hwbase(void) {
     return ret;
 }
 
-static int gpio_set_pull(rasp_gpio* drv, int gpio, rasp_gpio_pull_mode type) {
+static int gpio_set_pull_(gpio* drv, int gpio, gpio_pull_mode type) {
     if (gpio < GPIO_MIN || gpio > GPIO_MAX) return -1;
     if (type < 0 || type > 2) return -1;
 
@@ -88,13 +88,13 @@ static int gpio_set_pull(rasp_gpio* drv, int gpio, rasp_gpio_pull_mode type) {
         unsigned int pull;
 
         switch (type) {
-            case rasp_gpio_pull_mode_none:
+            case gpio_pull_mode_none:
                 pull = 0;
                 break;
-            case rasp_gpio_pull_mode_up:
+            case gpio_pull_mode_up:
                 pull = 1;
                 break;
-            case rasp_gpio_pull_mode_down:
+            case gpio_pull_mode_down:
                 pull = 2;
                 break;
             default:
@@ -121,7 +121,7 @@ static int gpio_set_pull(rasp_gpio* drv, int gpio, rasp_gpio_pull_mode type) {
 
     return 0;
 }
-static void set_gpio_fsel(rasp_gpio* drv, int gpio, int fsel) {
+static void set_gpio_fsel(gpio* drv, int gpio, int fsel) {
     uint32_t reg = gpio / 10;
     uint32_t sel = gpio % 10;
     uint32_t mask;
@@ -137,7 +137,7 @@ static void set_gpio_fsel(rasp_gpio* drv, int gpio, int fsel) {
 
 /* --------------------- */
 
-int rasp_gpio_initialize(rasp_gpio* drv) {
+int gpio_initialize(gpio* drv) {
     drv->internal.hw_base_address = 0;
     drv->internal.gpio_base = 0;
     drv->internal.is_2711 = 0;
@@ -166,23 +166,22 @@ int rasp_gpio_initialize(rasp_gpio* drv) {
 
     return 0;
 }
-int rasp_gpio_destroy(rasp_gpio* drv) {
+int gpio_destroy(gpio* drv) {
     if (drv->internal.gpio_base != 0) {
         munmap(drv->internal.gpio_base, BLOCK_SIZE);
         drv->internal.gpio_base = 0;
     }
     return 0;
 }
-int rasp_gpio_set_pull(rasp_gpio* drv, int pin_no, rasp_gpio_pull_mode mode) {
-    gpio_set_pull(drv, pin_no, mode);
+int gpio_set_pull(gpio* drv, int pin_no, gpio_pull_mode mode) {
+    gpio_set_pull_(drv, pin_no, mode);
     return 0;
 }
-int rasp_gpio_set_direction(rasp_gpio* drv, int pin_no,
-                            rasp_gpio_direction dir) {
+int gpio_set_direction(gpio* drv, int pin_no, gpio_direction dir) {
     set_gpio_fsel(drv, pin_no, dir);
     return 0;
 }
-int rasp_gpio_set_level(rasp_gpio* drv, int pin_no, int level_output) {
+int gpio_set_level(gpio* drv, int pin_no, int level_output) {
     if (pin_no < GPIO_MIN || pin_no > GPIO_MAX) return -1;
     void* gpio_base = drv->internal.gpio_base;
     if (level_output != 0) {
@@ -202,7 +201,7 @@ int rasp_gpio_set_level(rasp_gpio* drv, int pin_no, int level_output) {
     }
     return 0;
 }
-int rasp_gpio_get_level(rasp_gpio* drv, int pin_no) {
+int gpio_get_level(gpio* drv, int pin_no) {
     if (pin_no < GPIO_MIN || pin_no > GPIO_MAX) return -1;
     void* gpio_base = drv->internal.gpio_base;
     if (pin_no < 32) {

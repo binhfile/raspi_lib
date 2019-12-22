@@ -18,10 +18,10 @@ struct timeval time_now() {
     return tNow;
 }
 
-void time_diff(const struct timeval *a, const struct timeval *b, struct timeval *result){
+void time_diff(const struct timeval *a, const struct timeval *b,
+               struct timeval *result) {
     timersub(b, a, result);
 }
-
 
 void delay_us(unsigned int howLong) {
     struct timespec sleeper;
