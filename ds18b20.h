@@ -3,6 +3,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct ds18b20_internal_ {
 } ds18b20_internal;
 
@@ -45,4 +49,7 @@ int ds18b20_read(ds18b20* drv, uint64_t id, int* result,
 int ds18b20_read_one_device(ds18b20* drv, int* result,
                             ds18b20_resolution* resolution);
 
+#ifdef __cplusplus
+};
+#endif
 #endif
